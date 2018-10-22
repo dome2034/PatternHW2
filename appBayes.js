@@ -37,7 +37,7 @@ const setUpTrainData = (percentValidate, data) => {
     return trainDatas
 }
 
-const separateClass = (dataSource, classLabel,f) => {
+const separateClass = (dataSource, classLabel, f) => {
     return dataSource.filter((data) => { return data[4] === classLabel }).map((val) => {
         return val.slice(0, f)
     })
@@ -48,9 +48,9 @@ const average = datas => {
     initP = datas[0].map(a => 0)
     return datas.reduce((p, c) => {
         let res = []
-            for(let i =0 ; i<p.length;i++){
-                res.push(parseFloat(p[i]) + parseFloat(c[i]))
-            }
+        for (let i = 0; i < p.length; i++) {
+            res.push(parseFloat(p[i]) + parseFloat(c[i]))
+        }
         return res
     }, initP).map((sum) => {
         return sum / datas.length
@@ -60,7 +60,7 @@ const average = datas => {
 const xMinusMean = (datas, means) => {
     return datas.map((data) => {
         let res = []
-        for(let i =0 ; i<data.length;i++){
+        for (let i = 0; i < data.length; i++) {
             res.push(parseFloat(data[i]) - parseFloat(means[i]))
         }
         return res
@@ -86,8 +86,8 @@ const main = async () => {
             return val.slice(-1)
         })
 
-        let trainClass1 = separateClass(trainDatas[i], '1',fNum)
-        let trainClass2 = separateClass(trainDatas[i], '2',fNum)
+        let trainClass1 = separateClass(trainDatas[i], '1', fNum)
+        let trainClass2 = separateClass(trainDatas[i], '2', fNum)
 
         let meanClass1 = average(trainClass1)
         let meanClass2 = average(trainClass2)
@@ -98,7 +98,7 @@ const main = async () => {
         let cov1 = math.multiply(math.multiply(math.transpose(trainXMinusMean1), trainXMinusMean1), (1 / trainClass1.length))
         let cov2 = math.multiply(math.multiply(math.transpose(trainXMinusMean2), trainXMinusMean2), (1 / trainClass2.length))
         let a = 0, b = 0, c = 0, d = 0
-        for (j = 0; j <= 9; j++) {
+        for (j = 0; j < testData.length; j++) {
             let testXMinusMean1 = xMinusMean(testData, meanClass1)
             let testXMinusMean2 = xMinusMean(testData, meanClass2)
             let classChoose
@@ -114,14 +114,14 @@ const main = async () => {
             else if (parseInt(testClass[j]) === 2 && classChoose === 2) { d = d + 1 }
         }
         console.log(`---------- Validation ${i + 1} --------------`)
-        let smeanClass1 = meanClass1.reduce((res,mean) => res +' '+ mean,'')
-        let smeanClass2 = meanClass2.reduce((res,mean) => res +' '+ mean,'')
+        let smeanClass1 = meanClass1.reduce((res, mean) => res + ' ' + mean, '')
+        let smeanClass2 = meanClass2.reduce((res, mean) => res + ' ' + mean, '')
         console.log(`Mean class 1 : | ${smeanClass1} |`)
         console.log(`Mean class 2 : | ${smeanClass2} |`)
         console.log(`\nCovariance matrices`)
 
         cov1.forEach((row) => {
-            let cov = row.reduce((res,r) => res +' '+ r,'')
+            let cov = row.reduce((res, r) => res + ' ' + r, '')
             console.log(`| ${cov} |`)
         })
         console.log(`\nConfusion matrix`)
