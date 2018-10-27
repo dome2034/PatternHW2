@@ -4,7 +4,7 @@ const math = require('mathjs')
 let input = fs.readFileSync('TWOCLASS.dat', 'utf8')
 const fNum = 4 //Change number of features here
 const percentValidate = 10
-const kValue = 4
+const kValue = 14
 
 const fetchData = Promise.resolve(
     input.trim().split('\r\n').map(x => x.split('\t'))
@@ -93,7 +93,7 @@ const main = async () => {
         let error = 100 - correct
         console.log(`\ncorrect ${correct} %`)
         console.log(`error ${error} %`)
-        console.log(`--------------------------------\n`)
+        console.log(`--------------------------------\n\n\n\n\n\n\n\n\n`)
     }
 }
 
