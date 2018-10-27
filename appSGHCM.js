@@ -101,15 +101,17 @@ const main = async () => {
                 v1 = v2
                 v2 = Math.sqrt(sumPDist)
                 eCal = Math.abs(v1 - v2)
+                console.log(`v1 ${v1} v2 ${v2}`)
+                console.log(`e ${eCal}`)
             }
             else {
                 v1 = v2
                 v2 = Math.sqrt(sumPDist)
                 eCal = Math.abs(v1 - v2)
+                console.log(`v1 ${v1} v2 ${v2}`)
+                console.log(`e ${eCal}`)
             }
         }
-        console.log(`v1 ${v1} v2 ${v2}`)
-        console.log(`e ${eCal}`)
         console.log(`cluster 1: ${cluster[0].length} cluster 2: ${cluster[1].length} cluster 3: ${cluster[2].length}`)
         console.log('cluster all', cluster[0].length + cluster[1].length + cluster[2].length, '\n')
         if (t > 0 && eCal <= e) break
