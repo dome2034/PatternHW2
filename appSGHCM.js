@@ -2,12 +2,13 @@ let fs = require('fs')
 const levenshtein = require('js-levenshtein');
 const cNum = 3 //Change number of clusters here
 const maxT = 100
-let e = 0.5
+let e = 0.005
+let dataSet = 'da'
 
 const fetchData = new Promise((resolve) => {
     let res = []
     for (let i = 1; i <= 22; i++) {
-        let input = fs.readFileSync(`chrom/dif${i}da`, 'utf8').trim().split('\r\n').map(x => x.split('\t'))
+        let input = fs.readFileSync(`chrom/dif${i}${dataSet}`, 'utf8').trim().split('\r\n').map(x => x.split('\t'))
         res = res.concat(input)
     }
     resolve(res)
@@ -42,7 +43,7 @@ const main = async () => {
             let minDist = 999999
             let chooseC = null
             for (let i = 0; i < cNum; i++) {
-                let dist = levenshtein(sourceData[n], sourceData[prototype[i]])
+                let dist = await levenshtein(sourceData[n], sourceData[prototype[i]])
                 if (dist < minDist) {
                     chooseC = i
                     minDist = dist
@@ -50,7 +51,7 @@ const main = async () => {
             }
             cluster[chooseC].push(n)
         }
-        console.log(`round ${t + 1}`)
+        console.log(`round: ${t + 1}`)
         prototype = []
         let minDist = 999999
         let chooseV = null
@@ -62,8 +63,8 @@ const main = async () => {
             for (let j = 0; j < cluster[i].length; j++) {
                 sumDist = 0
                 for (let k = 0; k < cluster[i].length; k++) {
-                    if (j != k) {
-                        let dist = levenshtein(sourceData[cluster[i][j]], sourceData[cluster[i][k]])
+                    if (cluster[i][j] != cluster[i][k]) {
+                        let dist = await levenshtein(sourceData[cluster[i][j]], sourceData[cluster[i][k]])
                         sumDist = sumDist + dist
                     }
                 }
@@ -75,6 +76,7 @@ const main = async () => {
             }
             prototype.push(chooseV)
         }
+        console.log(`current prototype : ${p1} (index)`)
         if (t === 0) {
             p2 = prototype
         }
@@ -86,11 +88,10 @@ const main = async () => {
             p1 = p2
             p2 = prototype
         }
-        console.log(`prototype 1: ${p1} prototype 2: ${p2}`)
         if (t > 0) {
             let sumPDist = 0
             for (let i = 0; i < cNum; i++) {
-                let dist = levenshtein(sourceData[p2[i]], sourceData[p1[i]])
+                let dist = await levenshtein(sourceData[p2[i]], sourceData[p1[i]])
                 sumPDist = sumPDist + Math.pow(dist, 2)
             }
             if (t === 0) {
@@ -101,19 +102,20 @@ const main = async () => {
                 v1 = v2
                 v2 = Math.sqrt(sumPDist)
                 eCal = Math.abs(v1 - v2)
-                console.log(`v1 ${v1} v2 ${v2}`)
                 console.log(`e ${eCal}`)
             }
             else {
                 v1 = v2
                 v2 = Math.sqrt(sumPDist)
                 eCal = Math.abs(v1 - v2)
-                console.log(`v1 ${v1} v2 ${v2}`)
                 console.log(`e ${eCal}`)
             }
         }
-        console.log(`cluster 1: ${cluster[0].length} cluster 2: ${cluster[1].length} cluster 3: ${cluster[2].length}`)
-        console.log('cluster all', cluster[0].length + cluster[1].length + cluster[2].length, '\n')
+        for(let c = 0 ; c< cNum;c++)
+        {
+            console.log(`cluster ${c+1} count: ${cluster[c].length}`)
+        }
+        console.log(`================================= \n`)
         if (t > 0 && eCal <= e) break
     }
 }
