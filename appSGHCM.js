@@ -27,9 +27,13 @@ const main = async () => {
     })
 
     // random choose prototype
+    if (prototype.length === 0) {
+        for (let i = 0; i < cNum; i++) {
+            let rand = Math.floor(Math.random() * sourceData.length)
+            prototype.push(rand)
+        }
+    }
     for (let i = 0; i < cNum; i++) {
-        let rand = Math.floor(Math.random() * sourceData.length)
-        prototype.push(rand)
         cluster.push([])
     }
     p1 = prototype
@@ -38,7 +42,6 @@ const main = async () => {
         for (let i = 0; i < cNum; i++) {
             cluster.push([])
         }
-
         for (let n = 0; n < sourceData.length; n++) {
             let minDist = 999999
             let chooseC = null
@@ -76,7 +79,7 @@ const main = async () => {
             }
             prototype.push(chooseV)
         }
-        console.log(`current prototype : ${p1} (index)`)
+        
         if (t === 0) {
             p2 = prototype
         }
@@ -98,22 +101,17 @@ const main = async () => {
                 v1 = 0
                 v2 = Math.sqrt(sumPDist)
             }
-            else if (t === 1) {
-                v1 = v2
-                v2 = Math.sqrt(sumPDist)
-                eCal = Math.abs(v1 - v2)
-                console.log(`e ${eCal}`)
-            }
+
             else {
                 v1 = v2
                 v2 = Math.sqrt(sumPDist)
                 eCal = Math.abs(v1 - v2)
-                console.log(`e ${eCal}`)
             }
         }
-        for(let c = 0 ; c< cNum;c++)
-        {
-            console.log(`cluster ${c+1} count: ${cluster[c].length}`)
+        console.log(`current prototype : ${p1} (index)`)
+        if (t != 0) console.log(`et: ${eCal}`)
+        for (let c = 0; c < cNum; c++) {
+            console.log(`cluster ${c + 1} count: ${cluster[c].length}`)
         }
         console.log(`================================= \n`)
         if (t > 0 && eCal <= e) break
